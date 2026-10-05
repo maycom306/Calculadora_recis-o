@@ -1,0 +1,160 @@
+.topbar {
+    min-height: 82px;
+    display: flex;
+    align-items: center;
+    gap: 13px;
+    padding: 0 clamp(22px, 5vw, 72px);
+    background: var(--surface);
+    border-bottom: 1px solid var(--line);
+}
+
+.brand-mark {
+    width: 38px;
+    height: 38px;
+    display: grid;
+    place-items: center;
+    border-radius: 8px;
+    background: var(--ink);
+    color: white;
+    font-family: Georgia, serif;
+    font-size: 23px;
+}
+
+.brand-copy h1, h2, p { margin: 0; }
+.brand-copy h1 { font-size: 17px; font-weight: 800; }
+.eyebrow { color: var(--muted); font-size: 10px; font-weight: 800; letter-spacing: 0.08em; }
+.brand-copy .eyebrow { margin-bottom: 1px; }
+
+.local-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin-left: auto;
+    color: var(--muted);
+    font-size: 12px;
+}
+
+.local-status span { width: 7px; height: 7px; border-radius: 50%; background: #299878; }
+
+.workspace {
+    width: min(100% - 40px, 1040px);
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 290px;
+    align-items: start;
+    gap: 22px;
+    margin: 42px auto 64px;
+}
+
+.form-panel, .validation-panel {
+    border: 1px solid var(--line);
+    border-radius: 7px;
+    background: var(--surface);
+}
+
+.form-panel { padding: clamp(22px, 4vw, 36px); }
+.section-heading { display: flex; align-items: center; justify-content: space-between; gap: 18px; }
+.section-heading .eyebrow { margin-bottom: 6px; }
+.section-heading h2, .validation-panel h2 { font-family: Georgia, "Times New Roman", serif; font-size: 23px; font-weight: 500; }
+.step-indicator { color: var(--accent); font-size: 14px; font-weight: 800; }
+.step-indicator span { color: #a2b0ab; font-weight: 600; }
+
+.field-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 19px 16px; margin-top: 25px; }
+.field { min-width: 0; display: grid; gap: 7px; color: #304b44; font-size: 12px; font-weight: 800; }
+.field-wide { grid-column: 1 / -1; }
+.field b, .required-note b { color: #bd5747; }
+.field input, .field select {
+    width: 100%;
+    height: 42px;
+    padding: 0 12px;
+    border: 1px solid #cbd8d2;
+    border-radius: 4px;
+    background: #fff;
+    color: var(--ink);
+    font-size: 14px;
+    font-weight: 500;
+}
+.field input::placeholder { color: #95a49f; }
+.field input:hover, .field select:hover { border-color: #93aaa1; }
+.wizard-step[hidden] { display: none; }
+
+.form-divider { height: 1px; margin: 29px 0 25px; background: var(--line); }
+.subsection-heading h2 { font-size: 20px; }
+.subsection-heading + .field-grid { margin-top: 19px; }
+
+.form-actions { display: flex; align-items: center; justify-content: space-between; gap: 14px; margin-top: 28px; }
+.required-note { color: var(--muted); font-size: 11px; }
+.primary-button {
+    min-height: 43px;
+    display: inline-flex;
+    align-items: center;
+    gap: 20px;
+    padding: 0 15px;
+    border: 0;
+    border-radius: 4px;
+    background: var(--accent);
+    color: white;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 800;
+}
+.primary-button:hover { background: var(--accent-dark); }
+.primary-button:disabled { opacity: 0.65; cursor: progress; }
+.primary-button span:last-child { font-size: 18px; line-height: 1; }
+.secondary-button {
+    min-height: 43px;
+    padding: 0 15px;
+    border: 1px solid var(--line);
+    border-radius: 4px;
+    background: white;
+    color: var(--ink);
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 800;
+}
+.secondary-button:hover { border-color: #93aaa1; background: #f7faf8; }
+.calculation-heading h2 { margin-top: 6px; font-family: Georgia, "Times New Roman", serif; font-size: 22px; font-weight: 500; }
+.calculation-caption { margin-top: 7px; color: var(--muted); font-size: 12px; }
+.calculation-list { margin-top: 22px; border-top: 1px solid var(--line); }
+.calculation-row { min-height: 68px; display: flex; align-items: center; justify-content: space-between; gap: 16px; border-bottom: 1px solid var(--line); }
+.calculation-row > span { display: grid; gap: 4px; }
+.calculation-row strong { color: var(--ink); font-size: 13px; }
+.calculation-row small { color: var(--muted); font-size: 11px; }
+.calculation-row output { flex: 0 0 auto; color: #7a8983; font-size: 12px; font-weight: 800; }
+.informational-row { background: #f7faf8; }
+.informational-row output { max-width: 130px; color: #526e64; text-align: right; }
+.deduction-row output { max-width: 130px; color: #9b5145; text-align: right; }
+.calculation-total { display: flex; justify-content: space-between; gap: 16px; padding: 17px 0 4px; color: var(--ink); font-size: 14px; }
+.calculation-total output { color: #7a8983; font-weight: 900; }
+.calculation-blocker { margin-top: 17px; padding: 12px 14px; border-left: 3px solid #c28047; background: #fbf6ee; color: #704b2d; font-size: 12px; line-height: 1.5; }
+
+.form-status { min-height: 20px; margin-top: 13px; color: var(--accent-dark); font-size: 12px; }
+.form-status.is-error { color: var(--danger); }
+
+.validation-panel { padding: 23px 21px; }
+.validation-panel[hidden] { display: none; }
+.validation-icon { width: 30px; height: 30px; display: grid; place-items: center; margin-bottom: 17px; border-radius: 50%; background: #e3f3ed; color: var(--accent); font-weight: 900; }
+.validation-panel h2 { margin-top: 5px; font-size: 20px; }
+.validated-data { display: grid; grid-template-columns: 1fr auto; gap: 11px 12px; margin-top: 21px; padding-top: 18px; border-top: 1px solid var(--line); }
+.validated-data dt { color: var(--muted); font-size: 11px; }
+.validated-data dd { max-width: 150px; margin: 0; overflow-wrap: anywhere; color: var(--ink); font-size: 12px; font-weight: 800; text-align: right; }
+
+.app-footer { display: flex; justify-content: space-between; gap: 16px; width: min(100% - 40px, 1040px); margin: 0 auto 22px; color: #768780; font-size: 11px; }
+
+@media (max-width: 760px) {
+    .workspace { grid-template-columns: 1fr; margin-top: 25px; }
+    .validation-panel { order: -1; }
+}
+
+@media (max-width: 500px) {
+    .topbar { min-height: 70px; padding: 0 18px; }
+    .workspace { width: min(100% - 24px, 1040px); gap: 14px; margin: 17px auto 38px; }
+    .form-panel { padding: 21px 17px; }
+    .field-grid { grid-template-columns: 1fr; gap: 15px; margin-top: 20px; }
+    .field-wide { grid-column: auto; }
+    .form-divider { margin: 23px 0 20px; }
+    .form-actions, .app-footer { align-items: flex-start; flex-direction: column; }
+    .app-footer { width: min(100% - 24px, 1040px); }
+    .primary-button { width: 100%; justify-content: space-between; }
+    .local-status { font-size: 0; }
+    .local-status span { width: 8px; height: 8px; }
+}
