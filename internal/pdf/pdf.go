@@ -1,6 +1,8 @@
 package pdf
 
 import (
+	"bytes"
+	_ "embed"
 	"fmt"
 	"os"
 	"path/filepath"
@@ -9,6 +11,9 @@ import (
 
 	"github.com/jung-kurt/gofpdf"
 )
+
+//go:embed assets/logo-ipanguacu.png
+var logoIpanguacu []byte
 
 // Documento representa os dados que devem constar no PDF final do termo.
 type Documento struct {
@@ -78,21 +83,33 @@ func configureFonts(pdf *gofpdf.Fpdf) {
 }
 
 func layoutTermo(pdf *gofpdf.Fpdf, doc Documento) {
-	pdf.SetFillColor(12, 52, 98)
-	pdf.Rect(12, 10, 186, 28, "F")
+	pdf.SetFillColor(25, 63, 101)
+	pdf.Rect(12, 10, 186, 34, "F")
+	pdf.SetFillColor(190, 44, 53)
+	pdf.Rect(12, 10, 186, 1.2, "F")
+
+	imageOptions := gofpdf.ImageOptions{ImageType: "PNG"}
+	pdf.RegisterImageOptionsReader("logo-ipanguacu", imageOptions, bytes.NewReader(logoIpanguacu))
+	pdf.ImageOptions("logo-ipanguacu", 16, 15, 63, 0, false, imageOptions, 0, "")
+
 	pdf.SetTextColor(255, 255, 255)
-	pdf.SetFont("Arial", "B", 14)
-	pdf.Text(17, 21, "ESTADO DO RIO GRANDE DO NORTE")
-	pdf.SetFont("Arial", "", 8)
-	pdf.SetTextColor(255, 255, 255)
-	pdf.Text(17, 28, "PREFEITURA MUNICIPAL DE IPANGUAÇU")
-	pdf.Text(17, 33, "SECRETARIA MUNICIPAL DE PLANEJAMENTO, ADMINISTRAÇÃO E TRANSPORTES")
+	pdf.SetFont("Arial", "B", 8)
+	pdf.Text(84, 18.5, "ESTADO DO RIO GRANDE DO NORTE")
+	pdf.SetFont("Arial", "B", 9)
+	pdf.Text(84, 24.5, "PREFEITURA MUNICIPAL DE IPANGUAÇU")
+	pdf.SetFont("Arial", "", 6.8)
+	pdf.Text(84, 31, "SECRETARIA MUNICIPAL DE PLANEJAMENTO, ADMINISTRAÇÃO E TRANSPORTES")
+	pdf.SetFont("Arial", "B", 7.5)
+	pdf.Text(84, 37, "DEPARTAMENTO DE RECURSOS HUMANOS")
 
 	pdf.SetTextColor(30, 30, 30)
-	pdf.SetY(43)
+	pdf.SetY(48)
 	pdf.SetFont("Arial", "B", 16)
 	pdf.CellFormat(0, 8, "TERMO DE RESCISÃO", "", 1, "C", false, 0, "")
-	pdf.Ln(2)
+	pdf.SetDrawColor(190, 44, 53)
+	pdf.SetLineWidth(0.6)
+	pdf.Line(84, 57, 126, 57)
+	pdf.Ln(6)
 
 	printSectionHeading(pdf, "DADOS DO SERVIDOR")
 	printCamposEmColunas(pdf, [][2]string{
@@ -118,45 +135,41 @@ func layoutTermo(pdf *gofpdf.Fpdf, doc Documento) {
 	printValor(pdf, "13º proporcional devido (após desconto dos avos recebidos)", formatMoedaInteiro(doc.DecimoTerceiro))
 	printValor(pdf, "Férias proporcionais devidas (após desconto dos avos pagos)", formatMoedaInteiro(doc.Ferias))
 	printValor(pdf, "Terço constitucional de férias", formatMoedaInteiro(doc.TercoFerias))
-	pdf.Ln(1)
+	pdf.Ln(2.5)
 	printValorTotal(pdf, "TOTAL DAS VERBAS RESCISÓRIAS", formatMoedaInteiro(doc.Total))
 
-	pdf.Ln(2)
+	pdf.Ln(2.5)
 	printSectionHeading(pdf, "VALOR SEPARADO (NÃO INCLUÍDO NO TOTAL)")
 	printValor(pdf, fmt.Sprintf("Dias trabalhados (%d dias)", doc.DiasTrabalhados), formatMoedaInteiro(doc.ValorDiasTrabalhados))
 
-	pdf.Ln(2)
-	pdf.SetFont("Arial", "", 8)
+	pdf.Ln(2.5)
+	pdf.SetTextColor(105, 116, 128)
+	pdf.SetFont("Arial", "", 7.5)
 	pdf.MultiCell(0, 4, "Cálculo realizado com os dados informados no sistema.", "", "L", false)
+	pdf.SetTextColor(30, 30, 30)
 
-	pdf.Ln(3)
-	ensureSpace(pdf, 18)
-	pdf.SetDrawColor(180, 180, 180)
-	y := pdf.GetY() + 7
-	pdf.Line(30, y, 95, y)
-	pdf.Line(120, y, 185, y)
-	pdf.SetY(y + 1)
-	pdf.SetFont("Arial", "", 7)
-	pdf.CellFormat(65, 4, "Assinatura do servidor", "", 0, "C", false, 0, "")
-	pdf.CellFormat(65, 4, "Responsável / setor", "", 0, "C", false, 0, "")
+	printAssinaturas(pdf)
 }
 
 func printSectionHeading(pdf *gofpdf.Fpdf, title string) {
-	ensureSpace(pdf, 15)
+	ensureSpace(pdf, 12)
 	y := pdf.GetY()
-	pdf.SetFillColor(235, 240, 245)
-	pdf.Rect(12, y, 186, 7, "F")
-	pdf.SetTextColor(30, 30, 30)
-	pdf.SetFont("Arial", "B", 9)
+	pdf.SetFillColor(232, 239, 246)
+	pdf.Rect(12, y, 186, 7.5, "F")
+	pdf.SetFillColor(38, 91, 137)
+	pdf.Rect(12, y, 1.2, 7.5, "F")
+	pdf.SetTextColor(25, 63, 101)
+	pdf.SetFont("Arial", "B", 8.5)
 	pdf.SetXY(17, y+0.5)
-	pdf.CellFormat(0, 6, title, "", 0, "L", false, 0, "")
+	pdf.CellFormat(0, 6.5, title, "", 0, "L", false, 0, "")
 	pdf.SetY(y + 9)
+	pdf.SetTextColor(30, 30, 30)
 }
 
 func printCamposEmColunas(pdf *gofpdf.Fpdf, campos [][2]string) {
 	const larguraColuna = 90.0
 	const espacoColunas = 6.0
-	const alturaLinha = 4.5
+	const alturaLinha = 4.4
 
 	for i := 0; i < len(campos); i += 2 {
 		left := campos[i]
@@ -183,50 +196,98 @@ func printCamposEmColunas(pdf *gofpdf.Fpdf, campos [][2]string) {
 		if len(rightLines) > lineCount {
 			lineCount = len(rightLines)
 		}
-		rowHeight := 5 + float64(lineCount)*alturaLinha
-		ensureSpace(pdf, rowHeight+2)
+		rowHeight := 5.5 + float64(lineCount)*alturaLinha
+		ensureSpace(pdf, rowHeight+1)
 		y := pdf.GetY()
+		pdf.SetFillColor(248, 250, 252)
+		pdf.Rect(12, y, larguraColuna, rowHeight-1, "F")
+		if i+1 < len(campos) {
+			pdf.Rect(12+larguraColuna+espacoColunas, y, larguraColuna, rowHeight-1, "F")
+		}
 		printCampoColuna(pdf, 12, y, larguraColuna, left[0], leftValue, alturaLinha)
 		if i+1 < len(campos) {
 			printCampoColuna(pdf, 12+larguraColuna+espacoColunas, y, larguraColuna, right[0], right[1], alturaLinha)
 		}
-		pdf.SetDrawColor(225, 229, 233)
+		pdf.SetDrawColor(216, 224, 232)
 		pdf.Line(12, y+rowHeight-1, 198, y+rowHeight-1)
-		pdf.SetY(y + rowHeight)
+		pdf.SetY(y + rowHeight + 0.5)
 	}
 }
 
 func printCampoColuna(pdf *gofpdf.Fpdf, x, y, width float64, label, value string, lineHeight float64) {
 	pdf.SetXY(x, y)
-	pdf.SetFont("Arial", "B", 8)
-	pdf.CellFormat(width, 4.5, label+":", "", 1, "L", false, 0, "")
-	pdf.SetXY(x, y+4.5)
+	pdf.SetTextColor(38, 91, 137)
+	pdf.SetFont("Arial", "B", 7.5)
+	pdf.CellFormat(width, 4.2, label+":", "", 1, "L", false, 0, "")
+	pdf.SetXY(x, y+4.2)
+	pdf.SetTextColor(35, 43, 52)
 	pdf.SetFont("Arial", "", 9)
 	pdf.MultiCell(width, lineHeight, value, "", "L", false)
+	pdf.SetTextColor(30, 30, 30)
 }
 
 func printValor(pdf *gofpdf.Fpdf, label, value string) {
-	ensureSpace(pdf, 8)
+	const labelWidth = 147.0
+	lineHeight := 4.7
+	pdf.SetFont("Arial", "B", 8.5)
+	lineCount := len(pdf.SplitText(label, labelWidth))
+	rowHeight := float64(lineCount) * lineHeight
+	if rowHeight < 8 {
+		rowHeight = 8
+	}
+	ensureSpace(pdf, rowHeight+1)
+	y := pdf.GetY()
+	pdf.SetFillColor(248, 250, 252)
+	pdf.Rect(12, y, 186, rowHeight, "F")
+	pdf.SetTextColor(42, 51, 61)
+	pdf.SetXY(15, y+(rowHeight-float64(lineCount)*lineHeight)/2)
+	pdf.MultiCell(labelWidth, lineHeight, label, "", "L", false)
+	pdf.SetTextColor(25, 63, 101)
 	pdf.SetFont("Arial", "B", 9)
-	pdf.CellFormat(125, 6.5, label+":", "", 0, "L", false, 0, "")
-	pdf.SetFont("Arial", "", 9)
-	pdf.CellFormat(0, 6.5, value, "", 1, "R", false, 0, "")
+	pdf.SetXY(162, y)
+	pdf.CellFormat(33, rowHeight, value, "", 0, "R", false, 0, "")
+	pdf.SetY(y + rowHeight + 1)
+	pdf.SetTextColor(30, 30, 30)
 }
 
 func printValorTotal(pdf *gofpdf.Fpdf, label, value string) {
 	ensureSpace(pdf, 9)
-	pdf.SetFillColor(231, 240, 233)
-	pdf.SetTextColor(28, 78, 45)
-	pdf.SetFont("Arial", "B", 9)
+	pdf.SetFillColor(25, 63, 101)
+	pdf.SetTextColor(255, 255, 255)
+	pdf.SetFont("Arial", "B", 9.5)
 	pdf.SetX(15)
 	pdf.CellFormat(120, 8, label, "", 0, "L", true, 0, "")
 	pdf.CellFormat(55, 8, value, "", 1, "R", true, 0, "")
 	pdf.SetTextColor(30, 30, 30)
+	pdf.SetLineWidth(0.2)
+}
+
+func printAssinaturas(pdf *gofpdf.Fpdf) {
+	pdf.SetDrawColor(190, 44, 53)
+	pdf.SetLineWidth(0.5)
+	pdf.Line(12, 263, 198, 263)
+	pdf.SetTextColor(25, 63, 101)
+	pdf.SetFont("Arial", "B", 8)
+	pdf.SetXY(12, 266)
+	pdf.CellFormat(186, 5, "ASSINATURAS", "", 0, "L", false, 0, "")
+
+	pdf.SetDrawColor(145, 155, 165)
+	pdf.SetLineWidth(0.25)
+	pdf.Line(24, 280, 96, 280)
+	pdf.Line(114, 280, 186, 280)
+	pdf.SetTextColor(82, 91, 101)
+	pdf.SetFont("Arial", "", 7.5)
+	pdf.SetXY(24, 282)
+	pdf.CellFormat(72, 4, "Assinatura do servidor", "", 0, "C", false, 0, "")
+	pdf.SetXY(114, 282)
+	pdf.CellFormat(72, 4, "Responsável / setor", "", 0, "C", false, 0, "")
+	pdf.SetTextColor(30, 30, 30)
+	pdf.SetLineWidth(0.2)
 }
 
 func ensureSpace(pdf *gofpdf.Fpdf, height float64) {
 	_, pageHeight := pdf.GetPageSize()
-	if pdf.GetY()+height > pageHeight-18 {
+	if pdf.GetY()+height > pageHeight-36 {
 		pdf.AddPage()
 	}
 }
